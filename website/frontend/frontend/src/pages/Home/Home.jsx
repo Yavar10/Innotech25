@@ -16,7 +16,7 @@ const Home = () => {
     <div className="flex flex-col items-center w-full">
       {/* NAVBAR */}
       <motion.nav
-        className=" bg-linear-to-br z-200 from-green-50 h-[100px] to-green-100 w-full sticky top-0 flex place-content-between items-center text-[25px] border-b"
+        className=" bg-linear-to-br z-200 from-green-50 h-[100px] to-green-100 w-full sticky top-0 flex place-content-between items-center text-[25px] border-grey-600-b"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
@@ -56,7 +56,7 @@ const Home = () => {
               backgroundColor: "rgba(34, 197, 94)",
               color: "white",
             }}
-            className="text-green-600 m-5 border-2 rounded-2xl p-2 text-[16px] sm:text-[18px]"
+            className="text-green-600 m-5 border-grey-600-2 rounded-2xl p-2 text-[16px] sm:text-[18px]"
             onClick={toggleLanguage}
           >
             {isHindi ? "English" : "हिन्दी"}
@@ -73,7 +73,7 @@ const Home = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <div className="shadow-sm hover:shadow-lg flex justify-center border rounded-2xl items-center">
+          <div className="shadow-sm hover:shadow-lg flex justify-center border-grey-600 rounded-2xl items-center">
             <motion.div
               className="shrink-0 w-[20%] h-full flex items-center justify-center"
               initial={{ rotate: -10, opacity: 0 }}
@@ -93,31 +93,31 @@ const Home = () => {
                   {isHindi ? "पंजाब, भारत" : "Punjab, India"}
                 </div>
               </div>
-              <div className="border rounded-full bg-green-600 text-white w-fit px-4 py-1 text-[14px] sm:text-[16px]">
+              <div className="border-grey-600 rounded-full bg-green-600 text-white w-fit px-4 py-1 text-[14px] sm:text-[16px]">
                 <p>{isHindi ? "5 एकड़" : "5 acres"}</p>
               </div>
             </div>
           </div>
           {/* stats */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="shadow-sm hover:shadow-lg p-4 border rounded-2xl flex flex-col mt-[10px] justify-center items-center w-full sm:w-auto">
+            <div className="shadow-sm hover:shadow-lg p-4 border-grey-600 rounded-2xl flex flex-col mt-[10px] justify-center items-center w-full sm:w-auto">
               <p className="text-green-600 text-[25px] font-bold">124</p>
               <p className="text-gray-600">{isHindi ? "कुल स्कैन" : "Total Scans"}</p>
             </div>
-            <div className="shadow-sm hover:shadow-lg p-4 border rounded-2xl flex flex-col justify-center items-center w-full sm:w-auto">
+            <div className="shadow-sm hover:shadow-lg p-4 border-grey-600 rounded-2xl flex flex-col justify-center items-center w-full sm:w-auto">
               <p className="text-green-600 text-[25px] font-bold">18</p>
               <p className="text-gray-600">
                 {isHindi ? "उपचारित बीमारियाँ" : "Diseases Treated"}
               </p>
             </div>
-            <div className="shadow-sm hover:shadow-lg p-4 border rounded-2xl flex flex-col justify-center items-center w-full sm:w-auto">
+            <div className="shadow-sm hover:shadow-lg p-4 border-grey-600 rounded-2xl flex flex-col justify-center items-center w-full sm:w-auto">
               <p className="text-yellow-600 text-[25px] font-bold">₹45K</p>
               <p className="text-gray-600">{isHindi ? "बचाई गई राशि" : "Money Saved"}</p>
             </div>
           </div>
 
           {/* warning */}
-          <div className="flex p-4 shadow-sm hover:shadow-lg border rounded-2xl bg-amber-50 mt-4">
+          <div className="flex p-4 shadow-sm hover:shadow-lg border-grey-600 rounded-2xl bg-amber-50 mt-4">
             <AlertCircle className="text-yellow-500 w-6 h-6" />
             <div className="flex-1 ml-2 text-[14px] sm:text-[16px]">
               <p className="text-yellow-500 font-extrabold">
@@ -139,7 +139,7 @@ const Home = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <div className="relative overflow-hidden border rounded-3xl">
+          <div className="relative overflow-hidden border-grey-600 rounded-3xl">
             <motion.img
               className="w-full rounded-3xl"
               src={grass}
@@ -205,7 +205,7 @@ const Home = () => {
             whileInView={{ opacity: 1, x: 0 }}
             initial={{ opacity: 0, x: -100 }}
             transition={{ duration: 0.8 }}
-            className="flex justify-between items-center border rounded-xl p-3 w-full hover:shadow-md hover:scale-[1.02] transition-all text-[14px] sm:text-[16px]"
+            className="flex justify-between items-center border-grey-600 rounded-xl p-3 w-full hover:shadow-md hover:scale-[1.02] transition-all text-[14px] sm:text-[16px]"
           >
             <div className="flex items-center gap-3 text-left">
               <svg
@@ -241,7 +241,7 @@ const Home = () => {
             whileInView={{ opacity: 1, x: 0 }}
             initial={{ opacity: 0, x: -100 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex justify-between items-center border rounded-xl p-3 w-full hover:shadow-md hover:scale-[1.02] transition-all text-[14px] sm:text-[16px]"
+            className="flex justify-between items-center border-grey-600 rounded-xl p-3 w-full hover:shadow-md hover:scale-[1.02] transition-all text-[14px] sm:text-[16px]"
           >
             <div className="flex items-center gap-3 text-left">
               <svg
@@ -274,7 +274,7 @@ const Home = () => {
             whileInView={{ opacity: 1, x: 0 }}
             initial={{ opacity: 0, x: -100 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex justify-between items-center border rounded-xl p-3 w-full hover:shadow-md hover:scale-[1.02] transition-all text-[14px] sm:text-[16px]"
+            className="flex justify-between items-center border-grey-600 rounded-xl p-3 w-full hover:shadow-md hover:scale-[1.02] transition-all text-[14px] sm:text-[16px]"
           >
             <div className="flex items-center gap-3 text-left">
               <svg
