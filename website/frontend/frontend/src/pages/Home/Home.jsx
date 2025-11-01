@@ -76,7 +76,7 @@ const Home = () => {
         >
           <div className="shadow-md flex justify-center border rounded-2xl items-center">
             <motion.div
-              className="flex-shrink-0 w-[20%] h-full flex items-center justify-center"
+              className="shrink-0 w-[20%] h-full flex items-center justify-center"
               initial={{ rotate: -10, opacity: 0 }}
               animate={{ rotate: 0, opacity: 1 }}
               transition={{ delay: 0.4 }}
