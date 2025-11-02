@@ -1,7 +1,10 @@
 import React from 'react'
 import { Leaf } from 'lucide-react'
 
+
 const NavigationBar = () => {
+ 
+
   return (
     <div className='h-[100px] w-full flex justify-between items-center border-b border-gray-200 sticky top-0 bg-white z-10'>
         <a href='#home' className='gap-4 h-[80%] ml-[10px] w-[25%] flex  items-center' >
