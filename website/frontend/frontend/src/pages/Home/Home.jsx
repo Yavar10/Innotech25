@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import "./Home.css";
 import NavBar from '../../components/NavBar/NavBar'
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 import { MapPin, UserCircle, AlertCircle, ScanLine, Image, Leaf } from "lucide-react";
 import grass from "../../assets/grass.jpg";
@@ -14,6 +16,12 @@ const Home = () => {
   const toggleLanguage = () => {
     setIsHindi((prev) => !prev);
   };
+
+  const location = useLocation();
+
+  useEffect(() => {
+    console.log("Home page refreshed");
+  }, [location.pathname]);
 
   return (
     <div>
