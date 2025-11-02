@@ -1,15 +1,15 @@
 import React from 'react'
 import Home from './pages/Home/Home'
 import NavBar from './components/NavBar/NavBar'
-import NavigationBar from './components/NavigationBar/NavigationBar'
-import Hero from './components/Hero/Hero'
+import LandingPage from './pages/LandingPage/LandingPage'
 
 const App = () => {
   return (
     <div>
-     <NavigationBar/>
-     <Hero />
-     {/*  <Home />
+      <LandingPage />
+    
+     {/* <Challenges />
+      <Home />
       <NavBar /> */}
     </div>
   )

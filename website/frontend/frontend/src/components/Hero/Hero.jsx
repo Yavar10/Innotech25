@@ -2,11 +2,13 @@ import React from 'react'
 import { Target, Bug, Languages } from "lucide-react";
 import { ArrowRight, Play } from "lucide-react";
 
+import crop from '../../assets/crop.avif'
+
 
 
 const Hero = () => {
   return (
-    <div className='flex justify-between items-center  w-full'>
+    <div id='home' className='bg-gradient-to-br from-green-100 via-white to-green-100 flex justify-between items-center  w-full'>
       <div className='w-[50%] flex flex-col gap-6 justify-center items-start p-10'>
         
         <div>
@@ -36,7 +38,7 @@ const Hero = () => {
               </p>
             </div>
             <div className="shadow-sm hover:shadow-lg p-4 border-grey-600 rounded-2xl flex flex-col justify-center  w-[30%] sm:w-[30%] w-auto">
-              <p className="text-green-600 text-[25px] font-semibold flex items-center gap-2"> <Languages className="w-6 h-6 text-green-600" />2K</p>
+              <p className="text-green-600 text-[25px] font-semibold flex items-center gap-2"> <Languages className="w-6 h-6 text-green-600" />2</p>
               <p className="text-gray-600">Languages</p>
             </div>
 </div>
@@ -46,7 +48,7 @@ const Hero = () => {
 {/* right side */}
 
       <div className='flex justify-center items-center w-[40%] h-[600px]'>
-        <div className='w-[50%] border-16 h-[95%] rounded-4xl flex justify-center items-center  shadow-green-600'><img src="" alt="" /></div>
+        <div className='w-[50%] border-16 h-[95%] rounded-4xl flex justify-center z-0 items-center overflow-hidden relative shadow-green-600'><div className='w-[50%] bg-black absolute h-[2%] rounded-b-2xl border-b-8 border-l-8 border-r-8 z-1 top-0'><img src="" alt="" /></div><img  className='scale-150 hover:scale-160 transition-transform duration-300 ease-in-out z-0' src={crop} alt="" /></div>
       </div>
     </div>
   )
