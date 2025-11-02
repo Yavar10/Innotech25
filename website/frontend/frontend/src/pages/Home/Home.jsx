@@ -1,11 +1,14 @@
 import { motion } from "framer-motion";
 import React, { useState } from "react";
 import "./Home.css";
+import NavBar from '../../components/NavBar/NavBar'
+import { useNavigate } from "react-router-dom";
 
 import { MapPin, UserCircle, AlertCircle, ScanLine, Image, Leaf } from "lucide-react";
 import grass from "../../assets/grass.jpg";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [isHindi, setIsHindi] = useState(false);
 
   const toggleLanguage = () => {
@@ -13,6 +16,7 @@ const Home = () => {
   };
 
   return (
+    <div>
     <div className="flex flex-col items-center w-full">
       {/* NAVBAR */}
       <motion.nav
@@ -21,7 +25,7 @@ const Home = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
       >
-        <motion.div
+        <motion.div onClick={()=>{navigate('/')}}
           className="flex m-5 h-[100px] items-center justify-center gap-3"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -65,7 +69,7 @@ const Home = () => {
       </motion.nav>
 
       {/* MAIN CONTENT */}
-      <div className="flex flex-col md:flex-row justify-center w-full">
+      <div className="flex flex-col md:flex-row justify-center mt-[2px] w-full">
         {/* LEFT CARD */}
         <motion.div
           className="flex flex-col justify-around h-auto md:h-[500px] w-[90%] md:w-[40%] rounded-3xl m-4"
@@ -306,6 +310,8 @@ const Home = () => {
           </motion.button>
         </div>
       </div>
+    </div>
+    <NavBar/>
     </div>
   );
 };

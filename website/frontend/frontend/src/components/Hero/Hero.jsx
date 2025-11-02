@@ -1,12 +1,14 @@
 import React from 'react'
 import { Target, Bug, Languages } from "lucide-react";
 import { ArrowRight, Play } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import crop from '../../assets/crop.avif'
 
 
 
 const Hero = () => {
+   const navigate = useNavigate();
   return (
     <div id='home' className='bg-gradient-to-br from-green-100 via-white to-green-100 flex justify-between items-center  w-full'>
       <div className='w-[50%] flex flex-col gap-6 justify-center items-start p-10'>
@@ -23,7 +25,7 @@ const Hero = () => {
 
          <div className='flex items-center gap-4'>
         <button className='text-[20px] rounded h-[60px] p-2 text-white bg-green-600 hover:bg-green-800 flex items-center gap-2'>Download App <ArrowRight className="w-6 h-6 text-white" /></button>
-        <button className='text-[20px] rounded p-2 h-[60px] hover:bg-gray-200 flex items-center gap-2'><Play className="w-6 h-6 text-black" /> Watch Demo</button>
+        <button onClick={() => navigate("/home")} className='text-[20px] rounded p-2 h-[60px] hover:bg-gray-200 flex items-center gap-2'><Play className="w-6 h-6 text-black" /> Watch Demo</button>
       </div>
 
 <div className=' flex justify-between w-full items-center'>
