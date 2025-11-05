@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+
+
 import { MapPin, UserCircle, AlertCircle, ScanLine, Image, Leaf, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "../../components/ui/Card";
 import { Badge } from "../../components/ui/Badge";
@@ -7,6 +10,26 @@ import { useNavigate } from "react-router-dom";
 import NavBar from "../../components/NavBar/NavBar";
 
 const Home = () => {
+  const handleFileChange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await axios.post("http://localhost:5000/api/predict", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    console.log("Prediction:", response.data);
+    alert(`Model prediction: ${response.data.result}`);
+  } catch (err) {
+    console.error(err);
+    alert("Upload failed. Try again.");
+  }
+};
+
   const navigate=useNavigate();
   const [isHindi, setIsHindi] = useState(false);
 
@@ -145,14 +168,26 @@ const Home = () => {
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
             <CardContent className="p-5 relative z-10">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-white rounded-xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                    <ScanLine className="w-6 h-6 text-green-600" />
-                  </div>
-                  <p className="text-sm font-semibold text-gray-800 text-center">
-                    {isHindi ? "फसल स्कैन करें" : "Scan Crop"}
-                  </p>
-                </div>
+               <div
+  onClick={() => document.getElementById("fileInput").click()}
+  className="bg-white rounded-xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1"
+>
+  <input
+    type="file"
+    accept="image/*"
+    capture="environment"
+    id="fileInput"
+    className="hidden"
+    onChange={handleFileChange}
+  />
+  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+    <ScanLine className="w-6 h-6 text-green-600" />
+  </div>
+  <p className="text-sm font-semibold text-gray-800 text-center">
+    {isHindi ? "फसल स्कैन करें" : "Scan Crop"}
+  </p>
+</div>
+
                 <div className="bg-white rounded-xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1">
                   <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                     <Image className="w-6 h-6 text-green-600" />
