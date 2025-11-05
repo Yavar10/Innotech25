@@ -25,7 +25,7 @@ const Hero = () => {
 
          <div className='flex items-center gap-4'>
         <button className='text-[20px] rounded h-[60px] p-2 text-white bg-green-600 hover:bg-green-800 flex items-center gap-2'>Download App <ArrowRight className="w-6 h-6 text-white" /></button>
-        <button onClick={() => navigate("/home")} className='text-[20px] rounded p-2 h-[60px] hover:bg-gray-200 flex items-center gap-2'><Play className="w-6 h-6 text-black" /> Watch Demo</button>
+        <button onClick={() => navigate("/")} className='text-[20px] rounded p-2 h-[60px] hover:bg-gray-200 flex items-center gap-2'><Play className="w-6 h-6 text-black" /> Watch Demo</button>
       </div>
 
 <div className=' flex justify-between w-full items-center'>
