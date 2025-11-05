@@ -1,0 +1,37 @@
+{
+  "name": "farmvision-backend",
+  "version": "1.0.0",
+  "description": "Firebase Backend for FarmVision AI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "build": "node -e \"console.log('Ready for deployment')\""
+  },
+  "keywords": [
+    "firebase",
+    "farmvision",
+    "ai"
+  ],
+  "author": "Your Name",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.13.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "express-validator": "^7.3.0",
+    "firebase-admin": "^12.7.0",
+    "helmet": "^7.2.0",
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.32.6",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": "18.x"
+  },
+  "type": "commonjs"
+}
