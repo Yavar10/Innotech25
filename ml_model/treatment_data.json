@@ -1,0 +1,182 @@
+{
+  "Pepper__bell___Bacterial_spot": {
+    "crop": "Bell Pepper",
+    "disease": "Bacterial Spot (Xanthomonas campestris pv. vesicatoria)",
+    "symptoms": "Small, dark, water-soaked spots on leaves and fruits that enlarge and turn brown with yellow halos.",
+    "treatment": {
+      "chemical": "Copper oxychloride 0.3% or Streptocycline 100 ppm",
+      "organic": "Neem oil 3 ml/L + Garlic extract 5%",
+      "schedule": "Spray every 10–12 days starting at first symptom.",
+      "quantity": "400–500 L/acre"
+    },
+    "precautions": "Avoid overhead irrigation, use certified seeds, rotate with non-solanaceous crops."
+  },
+  "Pepper__bell___healthy": {
+    "crop": "Bell Pepper",
+    "disease": "Healthy Crop",
+    "symptoms": "Uniform green leaves, no lesions or yellowing.",
+    "treatment": {
+      "chemical": "None required.",
+      "organic": "Maintain proper soil nutrients and compost.",
+      "schedule": "Monitor weekly.",
+      "quantity": "-"
+    },
+    "precautions": "Ensure proper drainage, balanced NPK, and sunlight exposure."
+  },
+  "Potato___healthy": {
+    "crop": "Potato",
+    "disease": "Healthy Crop",
+    "symptoms": "Uniform green leaves and clean tubers with no spots or rot.",
+    "treatment": {
+      "chemical": "No treatment needed.",
+      "organic": "Use compost and maintain soil pH between 5.5–6.5.",
+      "schedule": "Inspect weekly for pest or disease.",
+      "quantity": "-"
+    },
+    "precautions": "Use certified seed tubers and avoid waterlogging."
+  },
+  "Potato___Late_blight": {
+    "crop": "Potato",
+    "disease": "Late Blight (Phytophthora infestans)",
+    "symptoms": "Water-soaked lesions on leaves and tubers with white fungal growth under humidity.",
+    "treatment": {
+      "chemical": "Mancozeb (0.25%) or Metalaxyl + Mancozeb (0.2%)",
+      "organic": "Trichoderma viride 5 g/L + Neem oil 3 ml/L",
+      "schedule": "Spray at first symptom, then every 7–10 days.",
+      "quantity": "500 L/acre"
+    },
+    "precautions": "Avoid late evening irrigation, destroy infected leaves, rotate crops."
+  },
+  "Potato___Early_blight": {
+    "crop": "Potato",
+    "disease": "Early Blight (Alternaria solani)",
+    "symptoms": "Brown concentric rings on leaves, yellowing and premature drying.",
+    "treatment": {
+      "chemical": "Chlorothalonil 2 g/L or Mancozeb 2.5 g/L",
+      "organic": "Neem oil 3 ml/L + Garlic extract 5%",
+      "schedule": "3–4 sprays every 10 days.",
+      "quantity": "500 L/acre"
+    },
+    "precautions": "Remove infected debris and avoid overhead watering."
+  },
+  "Tomato_Leaf_Mold": {
+    "crop": "Tomato",
+    "disease": "Leaf Mold (Cladosporium fulvum)",
+    "symptoms": "Yellow spots on upper leaf surface and olive-green mold beneath leaves.",
+    "treatment": {
+      "chemical": "Chlorothalonil 2 g/L or Copper oxychloride 0.3%",
+      "organic": "Neem oil 5 ml/L or Baking soda 5 g/L spray.",
+      "schedule": "Every 7–10 days in humid weather.",
+      "quantity": "400–500 L/acre"
+    },
+    "precautions": "Avoid overcrowding; provide good ventilation."
+  },
+  "Tomato__Tomato_YellowLeaf__Curl_Virus": {
+    "crop": "Tomato",
+    "disease": "Tomato Yellow Leaf Curl Virus (TYLCV)",
+    "symptoms": "Upward curling leaves, yellowing, and stunted plant growth.",
+    "treatment": {
+      "chemical": "Imidacloprid 0.3 ml/L or Thiamethoxam 0.25 g/L (whitefly control)",
+      "organic": "Neem oil 5 ml/L every 7 days",
+      "schedule": "Spray insecticide every 10 days at early growth.",
+      "quantity": "500 L/acre"
+    },
+    "precautions": "Use yellow sticky traps; remove infected plants; control whiteflies."
+  },
+  "Tomato_Bacterial_spot": {
+    "crop": "Tomato",
+    "disease": "Bacterial Spot (Xanthomonas vesicatoria)",
+    "symptoms": "Small brown spots on leaves and fruits with yellow halo.",
+    "treatment": {
+      "chemical": "Copper hydroxide 0.3% or Streptocycline 100 ppm",
+      "organic": "Neem oil 3 ml/L + Garlic extract 5%",
+      "schedule": "Spray every 10 days from early stage.",
+      "quantity": "500 L/acre"
+    },
+    "precautions": "Avoid overhead watering; destroy infected debris."
+  },
+  "Tomato_Septoria_leaf_spot": {
+    "crop": "Tomato",
+    "disease": "Septoria Leaf Spot (Septoria lycopersici)",
+    "symptoms": "Circular spots with dark borders and light centers on older leaves.",
+    "treatment": {
+      "chemical": "Mancozeb 0.25% or Chlorothalonil 0.2%",
+      "organic": "Neem oil 3 ml/L weekly",
+      "schedule": "3–4 sprays at 7-day intervals.",
+      "quantity": "400–500 L/acre"
+    },
+    "precautions": "Ensure good air flow; avoid watering foliage."
+  },
+  "Tomato_healthy": {
+    "crop": "Tomato",
+    "disease": "Healthy Crop",
+    "symptoms": "Dark green foliage, no yellowing or pest marks.",
+    "treatment": {
+      "chemical": "None.",
+      "organic": "Maintain compost and proper irrigation.",
+      "schedule": "Weekly observation.",
+      "quantity": "-"
+    },
+    "precautions": "Avoid excessive nitrogen and waterlogging."
+  },
+  "Tomato_Spider_mites_Two_spotted_spider_mite": {
+    "crop": "Tomato",
+    "disease": "Two-Spotted Spider Mite (Tetranychus urticae)",
+    "symptoms": "Yellow speckling on leaves, webbing underneath, premature leaf drop.",
+    "treatment": {
+      "chemical": "Abamectin 0.5 ml/L or Spiromesifen 1 ml/L",
+      "organic": "Neem oil 5 ml/L every 7 days",
+      "schedule": "Spray both sides of leaves at early infestation.",
+      "quantity": "400–500 L/acre"
+    },
+    "precautions": "Avoid dry dusty conditions; maintain humidity."
+  },
+  "Tomato_Early_blight": {
+    "crop": "Tomato",
+    "disease": "Early Blight (Alternaria solani)",
+    "symptoms": "Dark concentric spots on lower leaves and fruit shoulder rot.",
+    "treatment": {
+      "chemical": "Mancozeb 0.25% or Copper oxychloride 0.3%",
+      "organic": "Neem oil 3 ml/L every 10 days",
+      "schedule": "Apply 3 sprays at 10-day intervals.",
+      "quantity": "500 L/acre"
+    },
+    "precautions": "Stake plants; remove infected leaves; avoid excess nitrogen."
+  },
+  "Tomato__Target_Spot": {
+    "crop": "Tomato",
+    "disease": "Target Spot (Corynespora cassiicola)",
+    "symptoms": "Brown circular spots with grey centers on leaves and fruits.",
+    "treatment": {
+      "chemical": "Chlorothalonil 0.2% or Mancozeb 0.25%",
+      "organic": "Neem oil 5 ml/L or Baking soda 5 g/L spray.",
+      "schedule": "Spray at first appearance; repeat after 10 days.",
+      "quantity": "400 L/acre"
+    },
+    "precautions": "Avoid continuous tomato cropping; provide spacing."
+  },
+  "Tomato_Late_blight": {
+    "crop": "Tomato",
+    "disease": "Late Blight (Phytophthora infestans)",
+    "symptoms": "Irregular water-soaked patches with white mold; fruit rot during humidity.",
+    "treatment": {
+      "chemical": "Metalaxyl + Mancozeb (0.2%)",
+      "organic": "Trichoderma spray 5 g/L + Neem seed kernel extract 5%",
+      "schedule": "Apply at symptom appearance and every 7 days.",
+      "quantity": "400–500 L/acre"
+    },
+    "precautions": "Avoid planting near potatoes; ensure good air circulation."
+  },
+  "Tomato__Tomato_mosaic_virus": {
+    "crop": "Tomato",
+    "disease": "Mosaic Virus",
+    "symptoms": "Mottled yellow and green leaves, curled leaf edges, reduced fruit set.",
+    "treatment": {
+      "chemical": "No direct control; manage aphid vectors.",
+      "organic": "Neem seed extract 5% spray + virus-free seedlings.",
+      "schedule": "Every 7 days if aphids appear.",
+      "quantity": "400 L/acre"
+    },
+    "precautions": "Avoid tobacco handling; disinfect tools; remove infected plants."
+  }
+}
