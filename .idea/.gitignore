@@ -3,5 +3,8 @@
 /workspace.xml
 # Environment-dependent path to Maven home directory
 /mavenHomeManager.xml
+<<<<<<< HEAD
 backend/farmvision-backend/node_modules/*
 /.idea_modules/
+=======
+>>>>>>> de91317a5936726bc2a68f76b710d35de5992b53
