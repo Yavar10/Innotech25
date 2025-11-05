@@ -1,0 +1,4 @@
+ml_model/PlantDetectionModel.h5
+backend/farmvision-backend/serviceAccountKey.json
+serviceAccountKey.json
+**/serviceAccountKey*.json
