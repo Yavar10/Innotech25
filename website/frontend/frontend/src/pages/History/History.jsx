@@ -26,7 +26,7 @@ const History = () => {
       console.log("Fetching scan history for user:", userId);
 
       const response = await axios.get(
-        `https://innotech25.onrender.com/api/scans/user/${userId}`,
+        `http://localhost:3000/api/scans/user/${userId}`,
         {
           timeout: 10000,
         }

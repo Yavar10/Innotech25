@@ -49,7 +49,7 @@ const Home = () => {
 
       // Send to backend
       const response = await axios.post(
-        "https://innotech25.onrender.com/api/scans/upload",
+        "http://localhost:3000/api/scans/upload",
         formData,
         {
           headers: {

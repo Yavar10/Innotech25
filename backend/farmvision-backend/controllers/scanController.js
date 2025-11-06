@@ -5,7 +5,6 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const fs = require('fs');
 
-
 // ============ UPLOAD AND SCAN IMAGE ============
 exports.uploadAndScan = async (req, res) => {
   let uploadedFilePath = null;
@@ -51,13 +50,10 @@ exports.uploadAndScan = async (req, res) => {
       contentType: req.file.mimetype
     });
 
-    // Send to Python FastAPI - UPDATED
-    const aiModelUrl = process.env.PYTHON_API_URL || 'http://localhost:8000';
-    const predictUrl = `${aiModelUrl}/predict`;
+    // Send to Python FastAPI
+    const aiModelUrl = process.env.AI_MODEL_URL || 'http://localhost:8000/predict';
     
-    console.log('   Calling:', predictUrl);
-    
-    const aiResponse = await axios.post(predictUrl, formData, {
+    const aiResponse = await axios.post(aiModelUrl, formData, {
       headers: {
         ...formData.getHeaders(),
       },
@@ -141,7 +137,7 @@ exports.uploadAndScan = async (req, res) => {
     if (error.code === 'ECONNREFUSED') {
       return res.status(503).json({
         error: 'AI Model service unavailable',
-        details: 'Python FastAPI backend is not accessible. Check PYTHON_API_URL environment variable.'
+        details: 'Python FastAPI backend is not running. Please start it on port 8000.'
       });
     }
 
