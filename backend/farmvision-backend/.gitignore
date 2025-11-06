@@ -3,3 +3,4 @@ node_modules
 servicerAccountKey.json
 test_images/
 test-integration.ps1
+uploads/
