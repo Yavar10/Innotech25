@@ -1,9 +1,9 @@
 const { db, storage } = require('../config/firebase');
 const axios = require('axios');
+const FormData = require('form-data');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const fs = require('fs');
-const FormData = require('form-data');
 
 // ============ UPLOAD AND SCAN IMAGE ============
 exports.uploadAndScan = async (req, res) => {
@@ -12,12 +12,14 @@ exports.uploadAndScan = async (req, res) => {
   try {
     const { userId } = req.body;
 
+    // Validate file upload
     if (!req.file) {
       return res.status(400).json({
         error: 'No file uploaded'
       });
     }
 
+    // Validate userId
     if (!userId) {
       return res.status(400).json({
         error: 'User ID is required'
@@ -37,43 +39,54 @@ exports.uploadAndScan = async (req, res) => {
       });
     }
 
-    // Send to Python FastAPI for disease prediction
+    console.log('🔄 Sending image to AI Model...');
+    console.log('   File:', req.file.filename);
+    console.log('   Size:', req.file.size, 'bytes');
+
+    // Prepare form data for FastAPI
     const formData = new FormData();
-    formData.append('file', fs.createReadStream(uploadedFilePath));
+    formData.append('file', fs.createReadStream(uploadedFilePath), {
+      filename: req.file.originalname,
+      contentType: req.file.mimetype
+    });
 
-    console.log('🔄 Sending image to AI Model:', process.env.AI_MODEL_URL);
+    // Send to Python FastAPI
+    const aiModelUrl = process.env.AI_MODEL_URL || 'http://localhost:8000/predict';
+    
+    const aiResponse = await axios.post(aiModelUrl, formData, {
+      headers: {
+        ...formData.getHeaders(),
+      },
+      timeout: 30000,
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity
+    });
 
-    const aiResponse = await axios.post(
-      process.env.AI_MODEL_URL,
-      formData,
-      {
-        headers: formData.getHeaders(),
-        timeout: 30000
-      }
-    );
+    console.log('✅ AI Model Response received');
+    console.log('   Prediction:', aiResponse.data.prediction_class);
+    console.log('   Confidence:', (aiResponse.data.confidence * 100).toFixed(2) + '%');
 
-    console.log('✅ AI Model Response:', aiResponse.data);
-
-    // Generate scan ID
+    // Generate scan ID and timestamp
     const scanId = uuidv4();
     const timestamp = new Date().toISOString();
 
-    // Prepare disease data
+    // Map FastAPI response to our database schema
     const diseaseData = {
       scanId,
       userId,
       imageUrl: req.file.filename,
       imagePath: uploadedFilePath,
-      predictionClass: 
-        aiResponse.data.prediction_class || 
-        aiResponse.data.predictionClass || 
-        'Unknown',
-      crop: aiResponse.data.crop || 'Unknown',
-      disease: aiResponse.data.disease || 'Unknown',
-      symptoms: aiResponse.data.symptoms || 'N/A',
-      treatment: aiResponse.data.treatment || {},
-      precautions: aiResponse.data.precautions || 'N/A',
-      confidence: aiResponse.data.confidence || 0,
+      
+      // AI Model fields
+      predictionClass: aiResponse.data.prediction_class,
+      crop: aiResponse.data.crop,
+      disease: aiResponse.data.disease,
+      symptoms: aiResponse.data.symptoms,
+      treatment: aiResponse.data.treatment,
+      precautions: aiResponse.data.precautions,
+      confidence: aiResponse.data.confidence,
+      
+      // Metadata
       scannedAt: timestamp,
       status: 'completed'
     };
@@ -82,33 +95,61 @@ exports.uploadAndScan = async (req, res) => {
     const scansRef = db.ref('diseaseScans');
     await scansRef.child(scanId).set(diseaseData);
 
-    // Add to user's disease history
+    // Add to user's disease history (compact version)
     const userHistoryRef = db.ref(`users/${userId}/diseaseHistory`);
     await userHistoryRef.child(scanId).set({
       scanId,
       predictionClass: diseaseData.predictionClass,
       crop: diseaseData.crop,
       disease: diseaseData.disease,
+      confidence: diseaseData.confidence,
       scannedAt: timestamp
     });
 
-    console.log('✅ Scan saved with ID:', scanId);
+    console.log('✅ Scan saved to Firebase with ID:', scanId);
 
+    // Return formatted response
     res.status(201).json({
       message: 'Scan completed successfully',
-      scan: diseaseData
+      scan: diseaseData,
+      summary: {
+        crop: diseaseData.crop,
+        disease: diseaseData.disease,
+        confidence: `${(diseaseData.confidence * 100).toFixed(2)}%`,
+        treatment_available: !!diseaseData.treatment
+      }
     });
 
   } catch (error) {
-    console.error('Upload and scan error:', error);
+    console.error('❌ Upload and scan error:', error.message);
 
-    // Clean up uploaded file
+    // Clean up uploaded file on error
     if (uploadedFilePath && fs.existsSync(uploadedFilePath)) {
-      fs.unlinkSync(uploadedFilePath);
+      try {
+        fs.unlinkSync(uploadedFilePath);
+        console.log('🗑️  Cleaned up uploaded file');
+      } catch (cleanupError) {
+        console.error('Failed to cleanup file:', cleanupError.message);
+      }
+    }
+
+    // Handle different error types
+    if (error.code === 'ECONNREFUSED') {
+      return res.status(503).json({
+        error: 'AI Model service unavailable',
+        details: 'Python FastAPI backend is not running. Please start it on port 8000.'
+      });
+    }
+
+    if (error.code === 'ETIMEDOUT') {
+      return res.status(504).json({
+        error: 'Request timeout',
+        details: 'AI Model took too long to respond'
+      });
     }
 
     if (error.response?.data) {
-      return res.status(500).json({
+      return res.status(error.response.status || 500).json({
         error: 'AI Model error',
         details: error.response.data
       });
@@ -121,12 +162,12 @@ exports.uploadAndScan = async (req, res) => {
   }
 };
 
+
 // ============ GET USER'S DISEASE HISTORY ============
 exports.getUserDiseaseHistory = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // Verify user exists
     const userRef = db.ref(`users/${userId}`);
     const userSnapshot = await userRef.once('value');
 
@@ -136,7 +177,6 @@ exports.getUserDiseaseHistory = async (req, res) => {
       });
     }
 
-    // Get disease scans for user
     const scansRef = db.ref('diseaseScans');
     const snapshot = await scansRef
       .orderByChild('userId')
@@ -156,7 +196,7 @@ exports.getUserDiseaseHistory = async (req, res) => {
       scans.push(child.val());
     });
 
-    // Sort by scannedAt (most recent first)
+    // Sort by date (most recent first)
     scans.sort((a, b) => new Date(b.scannedAt) - new Date(a.scannedAt));
 
     res.json({
@@ -172,6 +212,7 @@ exports.getUserDiseaseHistory = async (req, res) => {
     });
   }
 };
+
 
 // ============ GET SPECIFIC SCAN BY ID ============
 exports.getScanById = async (req, res) => {
@@ -197,6 +238,7 @@ exports.getScanById = async (req, res) => {
   }
 };
 
+
 // ============ DELETE SCAN ============
 exports.deleteScan = async (req, res) => {
   try {
@@ -217,7 +259,7 @@ exports.deleteScan = async (req, res) => {
     // Delete from diseaseScans
     await scanRef.remove();
 
-    // Delete from user's disease history
+    // Delete from user's history
     const userHistoryRef = db.ref(`users/${userId}/diseaseHistory/${scanId}`);
     await userHistoryRef.remove();
 
@@ -238,12 +280,12 @@ exports.deleteScan = async (req, res) => {
   }
 };
 
+
 // ============ GET DISEASE STATISTICS ============
 exports.getDiseaseStats = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // Verify user exists
     const userRef = db.ref(`users/${userId}`);
     const userSnapshot = await userRef.once('value');
 
@@ -290,63 +332,27 @@ exports.getDiseaseStats = async (req, res) => {
 
     scans.forEach((scan) => {
       // Count crops
-      stats.cropTypes[scan.crop] = 
-        (stats.cropTypes[scan.crop] || 0) + 1;
+      stats.cropTypes[scan.crop] = (stats.cropTypes[scan.crop] || 0) + 1;
 
       // Count diseases
-      if (scan.disease !== 'Healthy Crop') {
-        stats.diseaseTypes[scan.disease] = 
-          (stats.diseaseTypes[scan.disease] || 0) + 1;
-        stats.diseasesFound++;
-      } else {
+      if (scan.disease.toLowerCase().includes('healthy')) {
         stats.healthyScans++;
+      } else {
+        stats.diseaseTypes[scan.disease] = (stats.diseaseTypes[scan.disease] || 0) + 1;
+        stats.diseasesFound++;
       }
 
-      // Average confidence
+      // Sum confidence
       totalConfidence += scan.confidence || 0;
     });
 
-    stats.averageConfidence = 
-      (totalConfidence / scans.length).toFixed(2);
+    stats.averageConfidence = (totalConfidence / scans.length).toFixed(2);
 
     res.json(stats);
   } catch (error) {
     console.error('Get stats error:', error);
     res.status(500).json({
       error: 'Failed to fetch statistics',
-      details: error.message
-    });
-  }
-};
-
-// ============ GET ALL SCANS (ADMIN) ============
-exports.getAllScans = async (req, res) => {
-  try {
-    const scansRef = db.ref('diseaseScans');
-    const snapshot = await scansRef.once('value');
-
-    if (!snapshot.exists()) {
-      return res.json({
-        totalScans: 0,
-        scans: []
-      });
-    }
-
-    const scans = [];
-    snapshot.forEach((child) => {
-      scans.push(child.val());
-    });
-
-    scans.sort((a, b) => new Date(b.scannedAt) - new Date(a.scannedAt));
-
-    res.json({
-      totalScans: scans.length,
-      scans
-    });
-  } catch (error) {
-    console.error('Get all scans error:', error);
-    res.status(500).json({
-      error: 'Failed to fetch scans',
       details: error.message
     });
   }

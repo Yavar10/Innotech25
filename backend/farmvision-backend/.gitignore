@@ -1,3 +1,5 @@
 node_modules 
 .env
 servicerAccountKey.json
+test_images/
+test-integration.ps1
