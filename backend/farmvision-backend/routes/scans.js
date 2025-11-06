@@ -46,7 +46,7 @@ const upload = multer({
 router.post('/upload', upload.single('file'), scanController.uploadAndScan);
 router.get('/user/:userId', scanController.getUserDiseaseHistory);
 router.get('/stats/:userId', scanController.getDiseaseStats);
-router.get('/admin/all', scanController.getAllScans);
+// router.get('/admin/all', scanController.getAllScans);
 router.get('/:scanId', scanController.getScanById);
 router.delete('/:scanId', scanController.deleteScan);
 

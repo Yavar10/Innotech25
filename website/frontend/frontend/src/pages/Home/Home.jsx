@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
-
-import { MapPin, UserCircle, AlertCircle, ScanLine, Image, Leaf, ChevronRight } from "lucide-react";
+import { MapPin, UserCircle, AlertCircle, ScanLine, Image, Leaf, ChevronRight, Loader2, X } from "lucide-react";
 import { Card, CardContent } from "../../components/ui/Card";
 import { Badge } from "../../components/ui/Badge";
 import grass from "../../assets/grass.jpg";
@@ -10,51 +8,281 @@ import { useNavigate } from "react-router-dom";
 import NavBar from "../../components/NavBar/NavBar";
 
 const Home = () => {
-  const handleFileChange = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  try {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await axios.post("http://localhost:5000/api/predict", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-
-    console.log("Prediction:", response.data);
-    alert(`Model prediction: ${response.data.result}`);
-  } catch (err) {
-    console.error(err);
-    alert("Upload failed. Try again.");
-  }
-};
-
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [isHindi, setIsHindi] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [scanResult, setScanResult] = useState(null);
+  const [showResult, setShowResult] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Hardcoded userId for now - replace with actual auth
+  const userId = "11db59c0-6f39-43b2-8bb5-a0a228283644"; // TODO: Get from authentication context
+
+  const handleFileChange = async (e, source = "camera") => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert(isHindi ? "कृपया एक छवि फ़ाइल चुनें" : "Please select an image file");
+      return;
+    }
+
+    // Validate file size (10MB max)
+    if (file.size > 10 * 1024 * 1024) {
+      alert(isHindi ? "फ़ाइल का आकार 10MB से कम होना चाहिए" : "File size must be less than 10MB");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setScanResult(null);
+
+    try {
+      // Prepare FormData
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("userId", userId);
+
+      console.log("Uploading image:", file.name);
+      console.log("File size:", (file.size / 1024).toFixed(2), "KB");
+
+      // Send to backend
+      const response = await axios.post(
+        "http://localhost:3000/api/scans/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          timeout: 60000, // 60 second timeout
+        }
+      );
+
+      console.log("Backend response:", response.data);
+
+      // Set scan result
+      setScanResult(response.data.scan);
+      setShowResult(true);
+
+      // Show success message
+      alert(
+        isHindi
+          ? `रोग का पता चला: ${response.data.scan.disease}`
+          : `Disease Detected: ${response.data.scan.disease}`
+      );
+    } catch (err) {
+      console.error("Upload error:", err);
+
+      let errorMessage = isHindi ? "अपलोड विफल। पुनः प्रयास करें।" : "Upload failed. Try again.";
+
+      if (err.response) {
+        // Backend responded with error
+        console.error("Backend error:", err.response.data);
+        errorMessage = err.response.data.error || err.response.data.details || errorMessage;
+      } else if (err.request) {
+        // No response from backend
+        errorMessage = isHindi
+          ? "सर्वर से कोई प्रतिक्रिया नहीं। सर्वर चल रहा है जांचें।"
+          : "No response from server. Check if server is running.";
+      } else {
+        errorMessage = err.message;
+      }
+
+      setError(errorMessage);
+      alert(errorMessage);
+    } finally {
+      setLoading(false);
+      // Reset file input
+      e.target.value = "";
+    }
+  };
 
   const toggleLanguage = () => {
     setIsHindi((prev) => !prev);
   };
 
+  const closeResultModal = () => {
+    setShowResult(false);
+    setScanResult(null);
+  };
+
   useEffect(() => {
-    console.log("Home page refreshed");
+    console.log("Home page loaded");
   }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm">
+          <Card className="max-w-sm mx-4">
+            <CardContent className="p-8 text-center">
+              <Loader2 className="w-12 h-12 text-green-600 animate-spin mx-auto mb-4" />
+              <h3 className="text-lg font-bold text-gray-900 mb-2">
+                {isHindi ? "विश्लेषण हो रहा है..." : "Analyzing..."}
+              </h3>
+              <p className="text-sm text-gray-600">
+                {isHindi ? "कृपया प्रतीक्षा करें" : "Please wait"}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Result Modal */}
+      {showResult && scanResult && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm overflow-y-auto">
+          <Card className="max-w-2xl w-full my-8 max-h-[90vh] overflow-y-auto">
+            <CardContent className="p-6">
+              {/* Close Button */}
+              <div className="flex justify-between items-start mb-4">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {isHindi ? "स्कैन परिणाम" : "Scan Results"}
+                </h2>
+                <button
+                  onClick={closeResultModal}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-600" />
+                </button>
+              </div>
+
+              {/* Result Content */}
+              <div className="space-y-4">
+                {/* Crop & Disease */}
+                <div className="bg-green-50 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Leaf className="w-5 h-5 text-green-600" />
+                    <span className="font-semibold text-gray-700">
+                      {isHindi ? "फसल" : "Crop"}
+                    </span>
+                  </div>
+                  <p className="text-lg font-bold text-gray-900">{scanResult.crop}</p>
+                </div>
+
+                <div className="bg-red-50 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertCircle className="w-5 h-5 text-red-600" />
+                    <span className="font-semibold text-gray-700">
+                      {isHindi ? "रोग" : "Disease"}
+                    </span>
+                  </div>
+                  <p className="text-lg font-bold text-gray-900">{scanResult.disease}</p>
+                </div>
+
+                {/* Confidence */}
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <span className="font-semibold text-gray-700 block mb-2">
+                    {isHindi ? "विश्वास स्तर" : "Confidence"}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 bg-blue-200 rounded-full h-3">
+                      <div
+                        className="bg-blue-600 h-3 rounded-full transition-all"
+                        style={{ width: `${(scanResult.confidence * 100).toFixed(0)}%` }}
+                      ></div>
+                    </div>
+                    <span className="font-bold text-blue-600">
+                      {(scanResult.confidence * 100).toFixed(2)}%
+                    </span>
+                  </div>
+                </div>
+
+                {/* Symptoms */}
+                <div>
+                  <h3 className="font-bold text-gray-900 mb-2">
+                    {isHindi ? "लक्षण" : "Symptoms"}
+                  </h3>
+                  <p className="text-gray-700 text-sm bg-gray-50 rounded-lg p-3">
+                    {scanResult.symptoms}
+                  </p>
+                </div>
+
+                {/* Treatment */}
+                <div>
+                  <h3 className="font-bold text-gray-900 mb-2">
+                    {isHindi ? "उपचार" : "Treatment"}
+                  </h3>
+                  <div className="space-y-2">
+                    <div className="bg-purple-50 rounded-lg p-3">
+                      <span className="font-semibold text-purple-900 text-sm block mb-1">
+                        {isHindi ? "रासायनिक" : "Chemical"}
+                      </span>
+                      <p className="text-sm text-gray-700">{scanResult.treatment.chemical}</p>
+                    </div>
+                    <div className="bg-green-50 rounded-lg p-3">
+                      <span className="font-semibold text-green-900 text-sm block mb-1">
+                        {isHindi ? "जैविक" : "Organic"}
+                      </span>
+                      <p className="text-sm text-gray-700">{scanResult.treatment.organic}</p>
+                    </div>
+                    <div className="bg-yellow-50 rounded-lg p-3">
+                      <span className="font-semibold text-yellow-900 text-sm block mb-1">
+                        {isHindi ? "अनुसूची" : "Schedule"}
+                      </span>
+                      <p className="text-sm text-gray-700">{scanResult.treatment.schedule}</p>
+                    </div>
+                    <div className="bg-orange-50 rounded-lg p-3">
+                      <span className="font-semibold text-orange-900 text-sm block mb-1">
+                        {isHindi ? "मात्रा" : "Quantity"}
+                      </span>
+                      <p className="text-sm text-gray-700">{scanResult.treatment.quantity}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Precautions */}
+                <div>
+                  <h3 className="font-bold text-gray-900 mb-2">
+                    {isHindi ? "सावधानियां" : "Precautions"}
+                  </h3>
+                  <p className="text-gray-700 text-sm bg-amber-50 rounded-lg p-3">
+                    {scanResult.precautions}
+                  </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-2 pt-4">
+                  <button
+                    onClick={closeResultModal}
+                    className="flex-1 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                  >
+                    {isHindi ? "बंद करें" : "Close"}
+                  </button>
+                  <button
+                    onClick={() => {
+                      closeResultModal();
+                      navigate("/history");
+                    }}
+                    className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                  >
+                    {isHindi ? "इतिहास देखें" : "View History"}
+                  </button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {/* Header */}
       <header className="bg-white z-100 border-b border-green-100 sticky top-0 z-10 shadow-sm backdrop-blur-sm bg-white/90">
         <div className="flex items-center justify-between px-4 py-4">
           <div className="flex items-center gap-3">
-            <div onClick={()=>{navigate("/ld")}} className="w-11 h-11 bg-gradient-to-br from-green-600 to-emerald-600 rounded-lg flex items-center justify-center shadow-md">
+            <div
+              onClick={() => {
+                navigate("/ld");
+              }}
+              className="w-11 h-11 bg-gradient-to-br from-green-600 to-emerald-600 rounded-lg flex items-center justify-center shadow-md cursor-pointer"
+            >
               <span className="text-white font-extrabold text-lg">FV</span>
             </div>
             <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
               {!isHindi ? "FarmVision AI" : "फार्मविज़न AI"}
             </h1>
           </div>
-          
+
           <button
             onClick={toggleLanguage}
             className="border-2 border-green-600 rounded-xl px-3 sm:px-4 py-1.5 text-sm font-semibold text-green-600 hover:bg-green-600 hover:text-white transition-all"
@@ -168,27 +396,41 @@ const Home = () => {
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
             <CardContent className="p-5 relative z-10">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-               <div
-  onClick={() => document.getElementById("fileInput").click()}
-  className="bg-white rounded-xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1"
->
-  <input
-    type="file"
-    accept="image/*"
-    capture="environment"
-    id="fileInput"
-    className="hidden"
-    onChange={handleFileChange}
-  />
-  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-    <ScanLine className="w-6 h-6 text-green-600" />
-  </div>
-  <p className="text-sm font-semibold text-gray-800 text-center">
-    {isHindi ? "फसल स्कैन करें" : "Scan Crop"}
-  </p>
-</div>
+                {/* Camera Scan */}
+                <div
+                  onClick={() => document.getElementById("cameraInput").click()}
+                  className="bg-white rounded-xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 active:scale-95"
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    id="cameraInput"
+                    className="hidden"
+                    onChange={(e) => handleFileChange(e, "camera")}
+                    disabled={loading}
+                  />
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <ScanLine className="w-6 h-6 text-green-600" />
+                  </div>
+                  <p className="text-sm font-semibold text-gray-800 text-center">
+                    {isHindi ? "फसल स्कैन करें" : "Scan Crop"}
+                  </p>
+                </div>
 
-                <div className="bg-white rounded-xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1">
+                {/* Gallery Upload */}
+                <div
+                  onClick={() => document.getElementById("galleryInput").click()}
+                  className="bg-white rounded-xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 active:scale-95"
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    id="galleryInput"
+                    className="hidden"
+                    onChange={(e) => handleFileChange(e, "gallery")}
+                    disabled={loading}
+                  />
                   <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                     <Image className="w-6 h-6 text-green-600" />
                   </div>
@@ -196,7 +438,12 @@ const Home = () => {
                     {isHindi ? "गैलरी से अपलोड" : "Upload Image"}
                   </p>
                 </div>
-                <div className="bg-white rounded-xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1">
+
+                {/* Health History */}
+                <div
+                  onClick={() => navigate("/history")}
+                  className="bg-white rounded-xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 active:scale-95"
+                >
                   <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                     <Leaf className="w-6 h-6 text-green-600" />
                   </div>
@@ -333,7 +580,7 @@ const Home = () => {
       </div>
 
       {/* NavBar Placeholder */}
-      <NavBar/>
+      <NavBar />
     </div>
   );
 };
